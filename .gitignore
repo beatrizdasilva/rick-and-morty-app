@@ -1,0 +1,26 @@
+# Xcode - gitignore
+
+# Xcode
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+project.xcworkspace/
+xcuserdata/
+
+
+## Build generated
+build/*
+DerivedData/
+
+## Obj-C/Swift specific
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+
+*.DS_Store
+.AppleDouble
+.LSOverride
