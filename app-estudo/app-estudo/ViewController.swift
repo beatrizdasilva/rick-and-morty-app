@@ -1,9 +1,10 @@
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .purple
+        tabBar.isTranslucent = false
+        viewControllers = [createCharacterItem(), createLocationItem(), createEpisodeItem()]
     }
     
     @available(*, unavailable)
@@ -13,5 +14,26 @@ class ViewController: UIViewController {
     
     init() {
         super.init(nibName: nil, bundle: nil)
+    }
+    
+    private func createCharacterItem() -> UIViewController {
+        let navigationController = UINavigationController(rootViewController: CharactersViewController())
+        navigationController.tabBarItem.title = "Character"
+        navigationController.tabBarItem.image = .add
+        return navigationController
+    }
+    
+    private func createEpisodeItem() -> UIViewController {
+        let navigationController = UINavigationController(rootViewController: EpisodesViewController())
+        navigationController.tabBarItem.title = "Episodes"
+        navigationController.tabBarItem.image = .checkmark
+        return navigationController
+    }
+
+    private func createLocationItem() -> UIViewController {
+        let navigationController = UINavigationController(rootViewController: LocationsViewController())
+        navigationController.tabBarItem.title = "Location"
+        navigationController.tabBarItem.image = .remove
+        return navigationController
     }
 }
