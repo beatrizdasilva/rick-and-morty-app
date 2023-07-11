@@ -1,8 +1,8 @@
-//
-//  LocationsResult.swift
-//  app-estudo
-//
-//  Created by Beatriz Silva on 11/07/23.
-//
+struct LocationsResult {
+    let locations: [Location]
+    let maxItems: Int
+    let maxPages: Int
+}
 
-import Foundation
+
+// Fazer um custom decodable

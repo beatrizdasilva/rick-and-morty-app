@@ -1,8 +1,5 @@
-//
-//  LocationsService.swift
-//  app-estudo
-//
-//  Created by Beatriz Silva on 11/07/23.
-//
+import API
 
-import Foundation
+protocol LocationsServicing  {
+    func getLocation(completion: @escaping(Result<, ApiError>) -> Void)
+}

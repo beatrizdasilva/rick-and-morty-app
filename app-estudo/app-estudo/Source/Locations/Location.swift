@@ -1,8 +1,6 @@
-//
-//  Location.swift
-//  app-estudo
-//
-//  Created by Beatriz Silva on 11/07/23.
-//
-
-import Foundation
+struct Location: Decodable {
+    let id: Int
+    let name: String
+    let type: String
+    let dimension: String
+}
