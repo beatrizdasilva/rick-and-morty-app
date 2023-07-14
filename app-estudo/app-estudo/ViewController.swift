@@ -29,9 +29,15 @@ class ViewController: UITabBarController {
         navigationController.tabBarItem.image = .checkmark
         return navigationController
     }
-
+    
     private func createLocationItem() -> UIViewController {
-        let navigationController = UINavigationController(rootViewController: LocationsViewController())
+        let navigationController = UINavigationController(
+            rootViewController: LocationsViewController(
+                viewModel: LocationsViewModel(
+                    service: LocationsService()
+                )
+            )
+        )
         navigationController.tabBarItem.title = "Location"
         navigationController.tabBarItem.image = .remove
         return navigationController

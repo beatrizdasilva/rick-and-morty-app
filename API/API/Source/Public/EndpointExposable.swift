@@ -11,3 +11,10 @@ public protocol EndpointExposable {
     var customHeader: [String: String] { get }
     var contentType: ContentType { get }
 }
+
+public extension EndpointExposable {
+    var parameters: [String: Any] { return [:] }
+    var body: Data? { return nil }
+    var customHeader: [String: String] { return [:] }
+    var contentType: ContentType { return .applicationJson }
+}

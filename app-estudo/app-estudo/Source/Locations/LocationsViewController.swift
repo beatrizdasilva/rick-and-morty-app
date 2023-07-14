@@ -1,7 +1,13 @@
 import UI
 import UIKit
 
-class LocationsViewController: UIViewController, UITableViewDelegate {
+protocol LocationsViewControllerDisplay: AnyObject {
+    var informations: [InformationViewModel] { get set }
+}
+
+class LocationsViewController: UIViewController, UITableViewDelegate, LocationsViewControllerDisplay {
+    private var viewModel: LocationsViewModelProtocol
+    
     private lazy var table: UITableView = {
         let table = UITableView()
         table.translatesAutoresizingMaskIntoConstraints = false
@@ -16,9 +22,16 @@ class LocationsViewController: UIViewController, UITableViewDelegate {
         return table
     }()
     
+    var informations: [InformationViewModel] = [] {
+        didSet {
+            table.reloadData()
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .orange
+        viewModel.loadLocations()
     }
     
     @available(*, unavailable)
@@ -26,8 +39,10 @@ class LocationsViewController: UIViewController, UITableViewDelegate {
         fatalError("init code has not been implemented")
     }
     
-    init() {
+    init(viewModel: LocationsViewModelProtocol) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        self.viewModel.display = self
         addLayout()
         setupConstrainsts()
     }
@@ -48,7 +63,7 @@ class LocationsViewController: UIViewController, UITableViewDelegate {
 
 extension LocationsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
+        informations.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -57,11 +72,10 @@ extension LocationsViewController: UITableViewDataSource {
             for: indexPath
         ) as? InformationUITableViewCell else { return UITableViewCell() }
         
-        cell.configureView(informationViewModel: InformationViewModel(
-            title: "title \(indexPath.row)",
-            primaryText: "primary text",
-            secondaryText: "secondary text")
-        )
+        let informationViewModel = informations[indexPath.row]
+        
+        cell.configureView(informationViewModel: informationViewModel)
+        
         return cell
     }
 }

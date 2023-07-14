@@ -1,11 +1,11 @@
-final class Api: ApiProtocol {
+public final class Api: ApiProtocol {
     private let session: URLSession
     
-    init(session: URLSession = URLSession(configuration: .default)) {
+    public init(session: URLSession = URLSession(configuration: .default)) {
         self.session = session
     }
     
-    func execute<T>(endpoint: EndpointExposable, completion: @escaping (Result<T, ApiError>) -> Void) where T : Decodable {
+    public func execute<T>(endpoint: EndpointExposable, completion: @escaping (Result<T, ApiError>) -> Void) where T : Decodable {
         let request: URLRequest
         do {
             request = try createUrlRequest(endpoint: endpoint)
@@ -31,7 +31,7 @@ final class Api: ApiProtocol {
         task.resume()
     }
     
-    func execute<T>(endpoint: EndpointExposable) async throws -> T where T : Decodable {
+    public func execute<T>(endpoint: EndpointExposable) async throws -> T where T : Decodable {
         let request = try createUrlRequest(endpoint: endpoint)
         let (data, urlResponse) = try await session.data(for: request)
         let result = processResponse(urlResponse: urlResponse, data: data, type: T.self)
