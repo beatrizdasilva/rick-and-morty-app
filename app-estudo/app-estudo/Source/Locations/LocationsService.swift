@@ -7,7 +7,7 @@ protocol LocationsServicing {
 class LocationsService: LocationsServicing {
     private let api = Api()
     
-    func getLocation(completion: @escaping (Result<LocationsResult, ApiError>) -> Void) {
+    func getLocation(completion: @escaping(Result<LocationsResult, ApiError>) -> Void) {
         api.execute(endpoint: LocationEndpoints.locations) { (result: Result<LocationsResult, ApiError>) in
             DispatchQueue.main.async {
                 switch result {

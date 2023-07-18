@@ -30,6 +30,8 @@ class LocationsViewController: UIViewController, UITableViewDelegate, LocationsV
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        addLayout()
+        setupConstrainsts()
         view.backgroundColor = .orange
         viewModel.loadLocations()
     }
