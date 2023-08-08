@@ -1,17 +1,22 @@
 import API
 
 enum LocationEndpoints: EndpointExposable {
-    case locations
+    case locations(page: Int?)
     
     var baseURL: String {
-        return "https://rickandmortyapi.com/api/"
+        "https://rickandmortyapi.com/api/"
     }
     
     var path: String {
-        return "location"
+        "location"
     }
     
     var method: API.HttpMethod {
-        return .get
+        .get
+    }
+    
+    var parameters: [String: Any] {
+        guard case .locations(let currentPage) = self, let page = currentPage else { return [:] }
+        return ["page": page]
     }
 }
