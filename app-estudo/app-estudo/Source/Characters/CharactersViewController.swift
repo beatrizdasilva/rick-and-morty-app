@@ -6,6 +6,13 @@ class CharactersViewController: UIViewController {
         view.backgroundColor = .green
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        let searchController = UISearchController(searchResultsController: nil)
+        self.navigationItem.searchController = searchController
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = "Characters"
+    }
+    
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init code has not been implemented")

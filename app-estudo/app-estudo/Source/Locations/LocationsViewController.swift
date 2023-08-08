@@ -2,8 +2,7 @@ import UI
 import UIKit
 
 protocol LocationsViewControllerDisplay: AnyObject {
-    var informations: [InformationViewModel] { get set }
-    func addMoreLocations(_ location: [InformationViewModel])
+    func reloadLocations(location: [InformationViewModel], isLoadAllInformation: Bool)
 }
 
 class LocationsViewController: UIViewController, UITableViewDelegate, LocationsViewControllerDisplay {
@@ -22,6 +21,7 @@ class LocationsViewController: UIViewController, UITableViewDelegate, LocationsV
             LoadingUITableView.self,
             forCellReuseIdentifier: String(describing: LoadingUITableView.self)
         )
+        table.contentInset.bottom = tabBarController?.tabBar.frame.height ?? 0
         table.dataSource = self
         table.delegate = self
         table.refreshControl = refreshControl
@@ -35,23 +35,41 @@ class LocationsViewController: UIViewController, UITableViewDelegate, LocationsV
         return rc
     }()
     
+    private var isLoadAllInformation: Bool = true
+    
     var informations: [InformationViewModel] = [] {
         didSet {
             refreshControl.endRefreshing()
-            table.reloadData()
         }
     }
     
-    func addMoreLocations(_ location: [InformationViewModel]) {
-        informations.append(contentsOf: location)
+    func reloadLocations(location: [InformationViewModel], isLoadAllInformation: Bool) {
+        self.isLoadAllInformation = isLoadAllInformation
+        self.informations = location
+        table.reloadData()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .white
         addLayout()
         setupConstrainsts()
-        view.backgroundColor = .orange
         viewModel.loadLocations()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        self.navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = "Locations"
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        navigationItem.hidesSearchBarWhenScrolling = true
     }
     
     @available(*, unavailable)
@@ -98,7 +116,7 @@ extension LocationsViewController: UITableViewDataSource {
         case .locations:
             return informations.count
         case .loader:
-            return 1
+            return isLoadAllInformation ? 0 : 1
         }
     }
     
@@ -134,6 +152,13 @@ extension LocationsViewController: UITableViewDataSource {
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        2
+    }
+}
+
+extension LocationsViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        let searchText = searchController.searchBar.text
+        print(searchText)
     }
 }

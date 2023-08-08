@@ -3,7 +3,9 @@ import UIKit
 class ViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .white
         tabBar.isTranslucent = false
+//        tabBarController?.tabBar.isHidden = true
         viewControllers = [createCharacterItem(), createLocationItem(), createEpisodeItem()]
     }
     
