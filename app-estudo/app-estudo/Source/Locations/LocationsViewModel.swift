@@ -3,6 +3,7 @@ import UI
 protocol LocationsViewModelInput {
     func loadLocations()
     func getNextLocations()
+    func searchLocation(name: String)
 }
 
 protocol LocationsViewModelProtocol: LocationsViewModelInput {
@@ -15,6 +16,7 @@ class LocationsViewModel: LocationsViewModelProtocol {
     private let service: LocationsServicing
     private var currentPage: Int
     private var maxPages: Int
+    private var informations: [InformationViewModel] = []
     
     init(service: LocationsServicing) {
         self.service = service
@@ -32,7 +34,8 @@ class LocationsViewModel: LocationsViewModelProtocol {
                 let informationsViewModel = value.locations.map {
                     InformationViewModel(title: $0.name, primaryText: $0.type, secondaryText: $0.dimension)
                 }
-                self?.display?.informations = informationsViewModel
+                self?.informations = informationsViewModel
+                self?.display?.reloadLocations(location: informationsViewModel, isLoadAllInformation: false)
             case .failure:
                 break
             }
@@ -45,15 +48,35 @@ class LocationsViewModel: LocationsViewModelProtocol {
         } else {
             currentPage += 1
             service.getLocation(by: currentPage) { [weak self] result in
+                guard let self = self else { return }
                 switch result {
                 case .success(let value):
                     let informationsViewModel = value.locations.map {
                         InformationViewModel(title: $0.name, primaryText: $0.type, secondaryText: $0.dimension)
                     }
-                    self?.display?.addMoreLocations(informationsViewModel)
+                    self.informations.append(contentsOf: informationsViewModel)
+                    self.display?.reloadLocations(location: informations, isLoadAllInformation: currentPage >= maxPages)
                 case .failure:
                     break
                 }
+            }
+        }
+    }
+    
+    func searchLocation(name: String) {
+        service.getLocationBySearch(by: name, page: 1) { [weak self] result in
+            switch result {
+            case .success(let value):
+                self?.currentPage = 1
+                self?.maxPages = value.maxPages
+                
+                let informationsViewModel = value.locations.map {
+                    InformationViewModel(title: $0.name, primaryText: $0.type, secondaryText: $0.dimension)
+                }
+                self?.informations = informationsViewModel
+                self?.display?.reloadLocations(location: informationsViewModel, isLoadAllInformation: false)
+            case .failure:
+                break
             }
         }
     }
