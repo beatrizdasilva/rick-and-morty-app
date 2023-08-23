@@ -11,6 +11,7 @@ public class InformationView: UIView {
     
     private lazy var title: UILabel = {
         let text = UILabel()
+        text.font = .boldSystemFont(ofSize: 17)
         text.translatesAutoresizingMaskIntoConstraints = false
         return text
     }()
@@ -41,6 +42,7 @@ public class InformationView: UIView {
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.alignment = .center
         stack.axis = .horizontal
+        stack.spacing = 10
         stack.distribution = .fill
         return stack
     }()
@@ -73,8 +75,12 @@ public class InformationView: UIView {
         ])
         
         NSLayoutConstraint.activate([
-            image.widthAnchor.constraint(equalToConstant: 30),
-            image.heightAnchor.constraint(equalToConstant: 30)
+            textStack.topAnchor.constraint(equalTo: topAnchor, constant: 8)
+        ])
+        
+        NSLayoutConstraint.activate([
+            image.widthAnchor.constraint(equalToConstant: 40),
+            image.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
     

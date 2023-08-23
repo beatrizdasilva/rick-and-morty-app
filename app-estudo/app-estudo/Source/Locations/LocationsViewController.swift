@@ -25,6 +25,7 @@ class LocationsViewController: UIViewController, UITableViewDelegate, LocationsV
         table.dataSource = self
         table.delegate = self
         table.refreshControl = refreshControl
+        table.separatorStyle = .none
         return table
     }()
     
@@ -160,5 +161,6 @@ extension LocationsViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         let searchText = searchController.searchBar.text
         print(searchText)
+        viewModel.searchLocation(name: searchText ?? "")
     }
 }
