@@ -17,11 +17,13 @@ class LocationsViewModel: LocationsViewModelProtocol {
     private var currentPage: Int
     private var maxPages: Int
     private var informations: [InformationViewModel] = []
+    private var textTyped: String
     
     init(service: LocationsServicing) {
         self.service = service
         self.currentPage = 1
         self.maxPages = 1
+        self.textTyped = ""
     }
     
     func loadLocations() {
@@ -35,7 +37,7 @@ class LocationsViewModel: LocationsViewModelProtocol {
                     InformationViewModel(title: $0.name, primaryText: $0.type, secondaryText: $0.dimension)
                 }
                 self?.informations = informationsViewModel
-                self?.display?.reloadLocations(location: informationsViewModel, isLoadAllInformation: false)
+                self?.display?.reloadLocations(location: informationsViewModel, isLoadAllInformation: value.maxPages == 1)
             case .failure:
                 break
             }
@@ -47,7 +49,7 @@ class LocationsViewModel: LocationsViewModelProtocol {
             return
         } else {
             currentPage += 1
-            service.getLocation(by: currentPage) { [weak self] result in
+            service.getLocationBySearch(by: textTyped, page: currentPage) { [weak self] result in
                 guard let self = self else { return }
                 switch result {
                 case .success(let value):
@@ -64,6 +66,7 @@ class LocationsViewModel: LocationsViewModelProtocol {
     }
     
     func searchLocation(name: String) {
+        self.textTyped = name
         service.getLocationBySearch(by: name, page: 1) { [weak self] result in
             switch result {
             case .success(let value):
@@ -74,7 +77,7 @@ class LocationsViewModel: LocationsViewModelProtocol {
                     InformationViewModel(title: $0.name, primaryText: $0.type, secondaryText: $0.dimension)
                 }
                 self?.informations = informationsViewModel
-                self?.display?.reloadLocations(location: informationsViewModel, isLoadAllInformation: false)
+                self?.display?.reloadLocations(location: informationsViewModel, isLoadAllInformation: value.maxPages == 1)
             case .failure:
                 break
             }
