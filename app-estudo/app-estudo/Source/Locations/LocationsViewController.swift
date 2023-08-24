@@ -7,6 +7,7 @@ protocol LocationsViewControllerDisplay: AnyObject {
 
 class LocationsViewController: UIViewController, UITableViewDelegate, LocationsViewControllerDisplay {
     private var viewModel: LocationsViewModelProtocol
+    private var isLoadAllInformation: Bool = true
     
     private lazy var table: UITableView = {
         let table = UITableView()
@@ -35,8 +36,6 @@ class LocationsViewController: UIViewController, UITableViewDelegate, LocationsV
         rc.addTarget(self, action: #selector(refreshView), for: .valueChanged)
         return rc
     }()
-    
-    private var isLoadAllInformation: Bool = true
     
     var informations: [InformationViewModel] = [] {
         didSet {
@@ -160,7 +159,6 @@ extension LocationsViewController: UITableViewDataSource {
 extension LocationsViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         let searchText = searchController.searchBar.text
-        print(searchText)
         viewModel.searchLocation(name: searchText ?? "")
     }
 }

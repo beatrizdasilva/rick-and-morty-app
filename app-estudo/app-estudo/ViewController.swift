@@ -19,16 +19,11 @@ class ViewController: UITabBarController {
     }
     
     private func createCharacterItem() -> UIViewController {
-        let navigationController = UINavigationController(rootViewController: CharactersViewController())
+        let navigationController = UINavigationController(
+            rootViewController: CharactersViewController()
+        )
         navigationController.tabBarItem.title = "Character"
         navigationController.tabBarItem.image = .add
-        return navigationController
-    }
-    
-    private func createEpisodeItem() -> UIViewController {
-        let navigationController = UINavigationController(rootViewController: EpisodesViewController())
-        navigationController.tabBarItem.title = "Episodes"
-        navigationController.tabBarItem.image = .checkmark
         return navigationController
     }
     
@@ -42,6 +37,19 @@ class ViewController: UITabBarController {
         )
         navigationController.tabBarItem.title = "Location"
         navigationController.tabBarItem.image = .remove
+        return navigationController
+    }
+    
+    private func createEpisodeItem() -> UIViewController {
+        let navigationController = UINavigationController(
+            rootViewController: EpisodesViewController(
+                viewModel: EpisodesViewModel(
+                    service: EpisodesService()
+                )
+            )
+        )
+        navigationController.tabBarItem.title = "Episodes"
+        navigationController.tabBarItem.image = .checkmark
         return navigationController
     }
 }

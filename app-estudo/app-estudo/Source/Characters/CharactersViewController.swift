@@ -3,7 +3,7 @@ import UIKit
 class CharactersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .green
+        view.backgroundColor = .white
     }
     
     override func viewWillAppear(_ animated: Bool) {
