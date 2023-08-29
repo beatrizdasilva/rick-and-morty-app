@@ -1,9 +1,13 @@
 import UI
+import UIKit
 
 protocol EpisodesViewModelInput {
     func loadEpisodes()
     func getNextEpisodes()
     func searchEpisode(name: String)
+    func watch(row: Int)
+    func unwatch(row: Int)
+    func isEpisodeWatched(row: Int) -> Bool
 }
 
 protocol EpisodesViewModelProtocol: EpisodesViewModelInput {
@@ -14,13 +18,15 @@ class EpisodesViewModel: EpisodesViewModelProtocol {
     weak var display: EpisodesViewControllerDisplay?
     
     private let service: EpisodesServicing
+    private let repository: EpisodesRepositoryProtocol
     private var currentPage: Int
     private var maxPages: Int
     private var informations: [InformationViewModel] = []
     private var textTyped: String
     
-    init(service: EpisodesServicing) {
+    init(service: EpisodesServicing, repository: EpisodesRepositoryProtocol) {
         self.service = service
+        self.repository = repository
         self.currentPage = 1
         self.maxPages = 1
         self.textTyped = ""
@@ -35,7 +41,7 @@ class EpisodesViewModel: EpisodesViewModelProtocol {
                 self.maxPages = value.maxPages
                 
                 let informationsViewModel = value.episodes.map {
-                    InformationViewModel(title: $0.episode, primaryText: $0.name, secondaryText: nil)
+                    InformationViewModel(id: $0.id, image: UIImage(systemName: "heart.fill"), title: $0.episode, primaryText: $0.name, secondaryText: nil)
                 }
                 self.informations = informationsViewModel
                 self.display?.reloadEpisodes(episode: informationsViewModel, isLoadAllInformation: value.maxPages == 1)
@@ -55,7 +61,7 @@ class EpisodesViewModel: EpisodesViewModelProtocol {
                 switch result {
                 case .success(let value):
                     let informationsViewModel = value.episodes.map {
-                        InformationViewModel(title: $0.episode, primaryText: $0.name, secondaryText: nil)
+                        InformationViewModel(id: $0.id, image: UIImage(systemName: "heart.fill"), title: $0.episode, primaryText: $0.name, secondaryText: nil)
                     }
                     self.informations.append(contentsOf: informationsViewModel)
                     self.display?.reloadEpisodes(episode: informations, isLoadAllInformation: currentPage >= maxPages)
@@ -76,7 +82,7 @@ class EpisodesViewModel: EpisodesViewModelProtocol {
                 self.maxPages = value.maxPages
                 
                 let informationsViewModel = value.episodes.map {
-                    InformationViewModel(title: $0.episode, primaryText: $0.name, secondaryText: nil)
+                    InformationViewModel(id: $0.id, image: UIImage(systemName: "heart.fill"), title: $0.episode, primaryText: $0.name, secondaryText: nil)
                 }
                 self.informations = informationsViewModel
                 self.display?.reloadEpisodes(episode: informationsViewModel, isLoadAllInformation: value.maxPages == 1)
@@ -84,5 +90,27 @@ class EpisodesViewModel: EpisodesViewModelProtocol {
                 break
             }
         }
+    }
+    
+    func watch(row: Int) {
+        let id = getInformationId(index: row)
+        repository.addEpisode(id: id)
+        display?.reloadData()
+    }
+    
+    func unwatch(row: Int) {
+        let id = getInformationId(index: row)
+        repository.removeEpisode(id: id)
+        display?.reloadData()
+    }
+    
+    func isEpisodeWatched(row: Int) -> Bool {
+        let id = getInformationId(index: row)
+        return repository.containsEpisode(id: id)
+    }
+    
+    func getInformationId(index: Int) -> String {
+        let id = informations[index].id
+        return String(id)
     }
 }

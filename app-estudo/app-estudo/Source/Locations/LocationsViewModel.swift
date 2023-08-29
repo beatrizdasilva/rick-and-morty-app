@@ -1,4 +1,5 @@
 import UI
+import UIKit
 
 protocol LocationsViewModelInput {
     func loadLocations()
@@ -35,7 +36,7 @@ class LocationsViewModel: LocationsViewModelProtocol {
                 self.maxPages = value.maxPages
                 
                 let informationsViewModel = value.locations.map {
-                    InformationViewModel(title: $0.name, primaryText: $0.type, secondaryText: $0.dimension)
+                    InformationViewModel(id: $0.id, image: UIImage(systemName: "globe.americas.fill"), title: $0.name, primaryText: $0.type, secondaryText: $0.dimension)
                 }
                 self.informations = informationsViewModel
                 self.display?.reloadLocations(location: informationsViewModel, isLoadAllInformation: value.maxPages == 1)
@@ -55,7 +56,7 @@ class LocationsViewModel: LocationsViewModelProtocol {
                 switch result {
                 case .success(let value):
                     let informationsViewModel = value.locations.map {
-                        InformationViewModel(title: $0.name, primaryText: $0.type, secondaryText: $0.dimension)
+                        InformationViewModel(id: $0.id, image: UIImage(systemName: "globe.americas.fill"), title: $0.name, primaryText: $0.type, secondaryText: $0.dimension)
                     }
                     self.informations.append(contentsOf: informationsViewModel)
                     self.display?.reloadLocations(location: informations, isLoadAllInformation: currentPage >= maxPages)
@@ -76,7 +77,7 @@ class LocationsViewModel: LocationsViewModelProtocol {
                 self.maxPages = value.maxPages
                 
                 let informationsViewModel = value.locations.map {
-                    InformationViewModel(title: $0.name, primaryText: $0.type, secondaryText: $0.dimension)
+                    InformationViewModel(id: $0.id, image: UIImage(systemName: "globe.americas.fill"), title: $0.name, primaryText: $0.type, secondaryText: $0.dimension)
                 }
                 self.informations = informationsViewModel
                 self.display?.reloadLocations(location: informationsViewModel, isLoadAllInformation: value.maxPages == 1)

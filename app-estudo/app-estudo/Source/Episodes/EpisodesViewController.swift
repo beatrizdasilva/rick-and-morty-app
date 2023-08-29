@@ -3,6 +3,7 @@ import UIKit
 
 protocol EpisodesViewControllerDisplay: AnyObject {
     func reloadEpisodes(episode: [InformationViewModel], isLoadAllInformation: Bool)
+    func reloadData()
 }
 
 class EpisodesViewController: UIViewController, UITableViewDelegate, EpisodesViewControllerDisplay {
@@ -46,6 +47,10 @@ class EpisodesViewController: UIViewController, UITableViewDelegate, EpisodesVie
     func reloadEpisodes(episode: [InformationViewModel], isLoadAllInformation: Bool) {
         self.isLoadAllInformation = isLoadAllInformation
         self.informations = episode
+        table.reloadData()
+    }
+    
+    func reloadData() {
         table.reloadData()
     }
     
@@ -133,6 +138,7 @@ extension EpisodesViewController: UITableViewDataSource {
             let informationViewModel = informations[indexPath.row]
             
             cell.configureView(informationViewModel: informationViewModel)
+            cell.size = 10
             
             return cell
         case .loader:
@@ -153,6 +159,32 @@ extension EpisodesViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         2
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let isEpisodeWatched = viewModel.isEpisodeWatched(row: indexPath.row)
+        let item = isEpisodeWatched ? unwatch(row: indexPath.row) : watch(row: indexPath.row)
+        return UISwipeActionsConfiguration(actions: [item])
+    }
+    
+    private func watch(row: Int) -> UIContextualAction {
+        let item = UIContextualAction(
+            style: .normal,
+            title: "Watched") { _, _, _ in
+                print("swipe marcar")
+                self.viewModel.watch(row: row)
+            }
+        return item
+    }
+    
+    private func unwatch(row: Int) -> UIContextualAction {
+        let item = UIContextualAction(
+            style: .normal,
+            title: "Unmark") { _, _, _ in
+                print("swipe desmarcar")
+                self.viewModel.unwatch(row: row)
+            }
+        return item
     }
 }
 

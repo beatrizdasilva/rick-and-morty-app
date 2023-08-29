@@ -1,8 +1,10 @@
 import UIKit
 
 public class InformationUITableViewCell: UITableViewCell {
+    public var size: CGFloat = 10
+    
     private lazy var informationView: InformationView = {
-        let informationView = InformationView()
+        let informationView = InformationView(imageSize: size)
         informationView.translatesAutoresizingMaskIntoConstraints = false
         return informationView
     }()
