@@ -44,7 +44,8 @@ class ViewController: UITabBarController {
         let navigationController = UINavigationController(
             rootViewController: EpisodesViewController(
                 viewModel: EpisodesViewModel(
-                    service: EpisodesService()
+                    service: EpisodesService(),
+                    repository: EpisodesRepository()
                 )
             )
         )

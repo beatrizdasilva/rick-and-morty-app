@@ -1,11 +1,12 @@
 import UIKit
 
 public class InformationView: UIView {
+    private var size: CGFloat = 40
+    
     private lazy var image: UIImageView = {
         let image = UIImageView()
         image.contentMode = .scaleAspectFill
         image.translatesAutoresizingMaskIntoConstraints = false
-        image.backgroundColor = .cyan
         return image
     }()
     
@@ -53,6 +54,11 @@ public class InformationView: UIView {
         setupConstrainsts()
     }
     
+    public convenience init(imageSize: CGFloat) {
+        self.init(frame: .zero)
+        self.size = imageSize
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -79,12 +85,13 @@ public class InformationView: UIView {
         ])
         
         NSLayoutConstraint.activate([
-            image.widthAnchor.constraint(equalToConstant: 40),
-            image.heightAnchor.constraint(equalToConstant: 40)
+            image.widthAnchor.constraint(equalToConstant: size),
+            image.heightAnchor.constraint(equalToConstant: size)
         ])
     }
     
     public func configureView(informationViewModel: InformationViewModel) {
+        image.image = informationViewModel.image
         title.text = informationViewModel.title
         primaryText.text = informationViewModel.primaryText
         secondaryText.text = informationViewModel.secondaryText
