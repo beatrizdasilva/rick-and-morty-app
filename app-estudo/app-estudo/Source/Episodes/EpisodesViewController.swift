@@ -4,11 +4,18 @@ import UIKit
 protocol EpisodesViewControllerDisplay: AnyObject {
     func reloadEpisodes(episode: [InformationViewModel], isLoadAllInformation: Bool)
     func reloadData()
+    func updateCount(label: String)
 }
 
 class EpisodesViewController: UIViewController, UITableViewDelegate, EpisodesViewControllerDisplay {
     private var viewModel: EpisodesViewModelProtocol
     private var isLoadAllInformation: Bool = true
+    
+    private lazy var label: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     private lazy var table: UITableView = {
         let table = UITableView()
@@ -54,6 +61,10 @@ class EpisodesViewController: UIViewController, UITableViewDelegate, EpisodesVie
         table.reloadData()
     }
     
+    func updateCount(label: String) {
+        self.label.text = label
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -91,12 +102,19 @@ class EpisodesViewController: UIViewController, UITableViewDelegate, EpisodesVie
     }
     
     private func addLayout() {
+        view.addSubview(label)
         view.addSubview(table)
     }
     
     private func setupConstrainsts() {
         NSLayoutConstraint.activate([
-            table.topAnchor.constraint(equalTo: view.topAnchor),
+            label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            label.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            label.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+        ])
+        
+        NSLayoutConstraint.activate([
+            table.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 20),
             table.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             table.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             table.trailingAnchor.constraint(equalTo: view.trailingAnchor)
