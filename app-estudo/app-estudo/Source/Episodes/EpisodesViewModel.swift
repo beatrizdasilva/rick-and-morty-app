@@ -40,9 +40,7 @@ class EpisodesViewModel: EpisodesViewModelProtocol {
                 self.currentPage = 1
                 self.maxPages = value.maxPages
                 
-                let informationsViewModel = value.episodes.map {
-                    InformationViewModel(id: $0.id, image: UIImage(systemName: "heart.fill"), title: $0.episode, primaryText: $0.name, secondaryText: nil)
-                }
+                let informationsViewModel = mapEpisodes(episodes: value.episodes)
                 self.informations = informationsViewModel
                 self.display?.reloadEpisodes(episode: informationsViewModel, isLoadAllInformation: value.maxPages == 1)
             case .failure:
@@ -60,9 +58,7 @@ class EpisodesViewModel: EpisodesViewModelProtocol {
                 guard let self = self else { return }
                 switch result {
                 case .success(let value):
-                    let informationsViewModel = value.episodes.map {
-                        InformationViewModel(id: $0.id, image: UIImage(systemName: "heart.fill"), title: $0.episode, primaryText: $0.name, secondaryText: nil)
-                    }
+                    let informationsViewModel = mapEpisodes(episodes: value.episodes)
                     self.informations.append(contentsOf: informationsViewModel)
                     self.display?.reloadEpisodes(episode: informations, isLoadAllInformation: currentPage >= maxPages)
                 case .failure:
@@ -81,9 +77,7 @@ class EpisodesViewModel: EpisodesViewModelProtocol {
                 self.currentPage = 1
                 self.maxPages = value.maxPages
                 
-                let informationsViewModel = value.episodes.map {
-                    InformationViewModel(id: $0.id, image: UIImage(systemName: "heart.fill"), title: $0.episode, primaryText: $0.name, secondaryText: nil)
-                }
+                let informationsViewModel = mapEpisodes(episodes: value.episodes)
                 self.informations = informationsViewModel
                 self.display?.reloadEpisodes(episode: informationsViewModel, isLoadAllInformation: value.maxPages == 1)
             case .failure:
@@ -92,16 +86,30 @@ class EpisodesViewModel: EpisodesViewModelProtocol {
         }
     }
     
+    func mapEpisodes(episodes: [Episode]) -> [InformationViewModel] {
+        updateCountLabel()
+        
+        return episodes.map {
+            InformationViewModel(
+                id: $0.id,
+                image: repository.containsEpisode(id: String($0.id)) ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart"),
+                title: $0.episode,
+                primaryText: $0.name,
+                secondaryText: nil
+            )
+        }
+    }
+    
     func watch(row: Int) {
         let id = getInformationId(index: row)
         repository.addEpisode(id: id)
-        display?.reloadData()
+        reloadInformationViewModel()
     }
     
     func unwatch(row: Int) {
         let id = getInformationId(index: row)
         repository.removeEpisode(id: id)
-        display?.reloadData()
+        reloadInformationViewModel()
     }
     
     func isEpisodeWatched(row: Int) -> Bool {
@@ -112,5 +120,26 @@ class EpisodesViewModel: EpisodesViewModelProtocol {
     func getInformationId(index: Int) -> String {
         let id = informations[index].id
         return String(id)
+    }
+    
+    func reloadInformationViewModel() {
+        let viewModel = self.informations.map {
+            InformationViewModel(
+                id: $0.id,
+                image: repository.containsEpisode(id: String($0.id)) ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart"),
+                title: $0.title,
+                primaryText: $0.primaryText,
+                secondaryText: $0.secondaryText
+            )
+        }
+        self.informations = viewModel
+        self.display?.reloadEpisodes(episode: informations, isLoadAllInformation: true)
+        
+        updateCountLabel()
+    }
+    
+    func updateCountLabel() {
+        let count = repository.countEpisodes()
+        display?.updateCount(label: "You watched \(count) episodes")
     }
 }
