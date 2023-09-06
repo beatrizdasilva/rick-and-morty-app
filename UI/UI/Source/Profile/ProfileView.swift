@@ -12,9 +12,17 @@ class ProfileView: UIView {
         return text
     }()
     
+    private lazy var stackList: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
     private func addLayout() {
         addSubview(image)
         addSubview(name)
+        addSubview(stackList)
     }
     
     private func setupConstrainsts() {
@@ -30,8 +38,23 @@ class ProfileView: UIView {
         NSLayoutConstraint.activate([
             name.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 8),
             name.leadingAnchor.constraint(equalTo: leadingAnchor),
-            name.trailingAnchor.constraint(equalTo: trailingAnchor),
-            name.bottomAnchor.constraint(equalTo: bottomAnchor)
+            name.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
+        
+        NSLayoutConstraint.activate([
+            stackList.topAnchor.constraint(equalTo: name.bottomAnchor, constant: 16),
+            stackList.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackList.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackList.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
+    }
+    
+    func configureProfileView(profile: ProfileViewModel) {
+        name.text = profile.name
+        for item in profile.characteristics {
+            let itemView = ProfileInformationItem()
+            itemView.configureItem(item: item)
+            stackList.addArrangedSubview(itemView)
+        }
     }
 }
