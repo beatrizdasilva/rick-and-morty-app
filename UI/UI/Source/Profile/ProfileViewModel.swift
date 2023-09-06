@@ -1,8 +1,14 @@
-//
-//  ProfileViewModel.swift
-//  UI
-//
-//  Created by Beatriz Silva on 06/09/23.
-//
+import UIKit
 
-import Foundation
+public struct ProfileViewModel {
+    public let image: URL?
+    public let name: String
+    public let characteristics: [ListItem]
+}
+
+extension ProfileViewModel {
+    public struct ListItem {
+        public let primaryText: String
+        public let secondaryText: String
+    }
+}
