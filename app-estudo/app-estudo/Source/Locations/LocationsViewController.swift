@@ -32,7 +32,7 @@ class LocationsViewController: UIViewController, UITableViewDelegate, LocationsV
     
     private lazy var refreshControl: UIRefreshControl = {
         let rc = UIRefreshControl()
-        rc.attributedTitle = NSAttributedString(string: "Atualizando")
+        rc.attributedTitle = NSAttributedString(string: "Loading")
         rc.addTarget(self, action: #selector(refreshView), for: .valueChanged)
         return rc
     }()
