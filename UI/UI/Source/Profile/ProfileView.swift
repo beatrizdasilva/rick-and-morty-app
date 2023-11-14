@@ -67,6 +67,11 @@ public class ProfileView: UIView {
     
     public func configureProfileView(profile: ProfileViewModel) {
         name.text = profile.name
+        for item in stackList.arrangedSubviews {
+            stackList.removeArrangedSubview(item)
+            item.removeFromSuperview()
+        }
+                
         for item in profile.characteristics {
             let itemView = ProfileInformationItem()
             itemView.configureItem(item: item)
