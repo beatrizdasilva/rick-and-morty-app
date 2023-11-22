@@ -3,7 +3,6 @@ import UIKit
 
 protocol EpisodesViewControllerDisplay: AnyObject {
     func reloadEpisodes(episode: [InformationViewModel], isLoadAllInformation: Bool)
-    func reloadData()
     func updateCount(label: String)
 }
 
@@ -54,10 +53,6 @@ class EpisodesViewController: UIViewController, UITableViewDelegate, EpisodesVie
     func reloadEpisodes(episode: [InformationViewModel], isLoadAllInformation: Bool) {
         self.isLoadAllInformation = isLoadAllInformation
         self.informations = episode
-        table.reloadData()
-    }
-    
-    func reloadData() {
         table.reloadData()
     }
     

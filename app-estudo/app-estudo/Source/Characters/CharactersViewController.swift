@@ -1,44 +1,20 @@
 import UI
 import UIKit
 
-class CharactersViewController: UIViewController {
-    var profilesViewModel: [ProfileViewModel] = [
-        .init(
-            name: "Rick",
-            characteristics: [
-                .init(
-                    primaryText: "species",
-                    secondaryText: "human"
-                )
-            ]),
-        .init(
-            name: "Morty",
-            characteristics: [
-                .init(
-                    primaryText: "species",
-                    secondaryText: "human"
-                ),
-                .init(
-                    primaryText: "planet",
-                    secondaryText: "earth"
-                )
-            ]),
-        .init(
-            name: "Alien",
-            characteristics: [
-                .init(
-                    primaryText: "species",
-                    secondaryText: "alien"
-                )
-            ])
-    ]
+protocol CharactersViewControllerDisplay: AnyObject {
+    func reloadCharacters(character: [ProfileViewModel], isLoadAllInformation: Bool)
+}
+
+class CharactersViewController: UIViewController, CharactersViewControllerDisplay {
+    private var viewModel: CharactersViewModelProtocol
+    private var isLoadAllInformation: Bool = true
+    private var profilesViewModel: [ProfileViewModel] = []
     
     private lazy var collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         let width = view.bounds.size.width
         
         flowLayout.scrollDirection = .horizontal
-        //        flowLayout.estimatedItemSize = .init(width: width, height: 10)
         flowLayout.sectionInset = .zero
         flowLayout.minimumLineSpacing = .zero
         flowLayout.minimumInteritemSpacing = .zero
@@ -88,11 +64,13 @@ class CharactersViewController: UIViewController {
         configureCollectionView()
         addLayout()
         setupConstrainsts()
-        collectionView.reloadData()
+        viewModel.loadCharacters()
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
         self.navigationItem.searchController = searchController
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Characters"
@@ -103,8 +81,10 @@ class CharactersViewController: UIViewController {
         fatalError("init code has not been implemented")
     }
     
-    init() {
+    init(viewModel: CharactersViewModelProtocol) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        self.viewModel.display = self
     }
     
     private func configureCollectionView() {
@@ -144,6 +124,12 @@ class CharactersViewController: UIViewController {
             nextButton.heightAnchor.constraint(equalToConstant: 80)
         ])
     }
+    
+    func reloadCharacters(character: [ProfileViewModel], isLoadAllInformation: Bool) {
+        self.isLoadAllInformation = isLoadAllInformation
+        self.profilesViewModel = character
+        collectionView.reloadData()
+    }
 }
 
 extension CharactersViewController: UICollectionViewDataSource {
@@ -152,11 +138,22 @@ extension CharactersViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ProfileUICollectionViewCell.self), for: indexPath) as? ProfileUICollectionViewCell
-        else { return UICollectionViewCell() }
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: String(describing: ProfileUICollectionViewCell.self),
+            for: indexPath
+        ) as? ProfileUICollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        
         let profileViewModel = profilesViewModel[indexPath.row]
         cell.configureView(profileViewModel: profileViewModel)
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row == profilesViewModel.count - 1 {
+            viewModel.getNextCharacters()
+        }
     }
 }
 
@@ -183,5 +180,13 @@ extension CharactersViewController {
     
     func moveToItem(row: Int) {
         collectionView.scrollToItem(at: .init(row: row, section: 0), at: .centeredHorizontally, animated: true)
+    }
+}
+
+extension CharactersViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        let searchText = searchController.searchBar.text
+        viewModel.searchCharacter(name: searchText ?? "")
+        print(searchText)
     }
 }
