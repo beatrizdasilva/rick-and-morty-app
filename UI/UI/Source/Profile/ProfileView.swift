@@ -11,6 +11,7 @@ public class ProfileView: UIView {
     private lazy var name: UILabel = {
         let text = UILabel()
         text.textAlignment = .center
+        text.font = .systemFont(ofSize: 24)
         text.translatesAutoresizingMaskIntoConstraints = false
         return text
     }()
@@ -45,8 +46,8 @@ public class ProfileView: UIView {
         NSLayoutConstraint.activate([
             image.topAnchor.constraint(equalTo: topAnchor),
             image.centerXAnchor.constraint(equalTo: centerXAnchor),
-            image.widthAnchor.constraint(equalToConstant: 150),
-            image.heightAnchor.constraint(equalToConstant: 150),
+            image.widthAnchor.constraint(equalToConstant: 220),
+            image.heightAnchor.constraint(equalToConstant: 220),
             image.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor),
             image.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
         ])

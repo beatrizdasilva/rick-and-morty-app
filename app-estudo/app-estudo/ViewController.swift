@@ -20,7 +20,7 @@ class ViewController: UITabBarController {
     
     private func createCharacterItem() -> UIViewController {
         let navigationController = UINavigationController(
-            rootViewController: CharactersViewController()
+            rootViewController: CharactersViewController(viewModel: CharactersViewModel(service: CharactersService()))
         )
         navigationController.tabBarItem.title = "Character"
         navigationController.tabBarItem.image = .add
